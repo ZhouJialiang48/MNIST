@@ -56,11 +56,19 @@ def backward(mnist):
     with tf.Session() as sess:
         init_op = tf.global_variables_initializer()
         sess.run(init_op)
+
+        # 实现断点续训
+        ckpt = tf.train.get_checkpoint_state(MODEL_SAVE_PATH)
+        # 若存在ckpt文件，则将文件记录添加到sess会话
+        if ckpt and ckpt.model_checkpoint_path:
+            saver.restore(sess, ckpt.model_checkpoint_path)
+
         for i in range(STEPS):
             xs, ys = mnist.train.next_batch(BATCH_SIZE)
-            _, loss_val = sess.run([train_op, loss], feed_dict={x: xs, y_: ys})
+            # 此处通过step变量获取全局计数器的值，保证了断点续训的连续性
+            _, loss_val, step = sess.run([train_op, loss, global_step], feed_dict={x: xs, y_: ys})
             if i % LOG_CYCLE == 0:
-                print('Iter {}, loss is {}'.format(i, loss_val))
+                print('Iter {}, loss is {}'.format(step, loss_val))
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=global_step)
 
 
