@@ -11,7 +11,7 @@
 
 ### 操作步骤
 
-#####1. 获取项目文件，切换到工作目录下
+##### 1. 获取项目文件，切换到工作目录下
 ```bash
 git clone git@github.com:zhoujl48/MNIST.git
 cd MNIST/
